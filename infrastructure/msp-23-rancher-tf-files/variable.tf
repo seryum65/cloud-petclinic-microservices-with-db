@@ -22,13 +22,13 @@ variable "secgrname" {
 }
 
 variable "domain-name" {
-  default = "yusufsahin.link"
+  default = "yusufsahin.click"
 }
 
 variable "rancher-subnet" {
-  default = "subnet-00f423b1ce22303dd"
+  default = "subnet-07be199b86168820a"
 }
 
 variable "hostedzone" {
-  default = "yusufsahin.link"
+  default = "yusufsahin.click"
 }

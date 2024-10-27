@@ -54,7 +54,7 @@ resource "aws_alb_target_group" "rancher-tg" {
   name = "clarus-rancher-http-80-tg"
   port = 80
   protocol = "HTTP"
-  vpc_id = "vpc-0597e701671b3cff0"
+  vpc_id = "vpc-0c1afcd66dcda0546"
   target_type = "instance"
 
   health_check {
@@ -82,7 +82,7 @@ resource "aws_lb" "rancher-alb" {
   ip_address_type = "ipv4"
   internal = false
   load_balancer_type = "application"
-  subnets = ["subnet-00f423b1ce22303dd", "subnet-0700af91963645e9f", "subnet-026962237650f3b77","subnet-0a85fd4604b6cca3c","subnet-05bdb2216a7b85f61"]
+  subnets = ["subnet-07be199b86168820a", "subnet-06ae843ee867d30a3", "subnet-0170dabfbcbb597bb","subnet-0213882afd00c0a24","subnet-0fd1088f5980d7352"]
   security_groups = [aws_security_group.rancher-alb.id]
 }
 
