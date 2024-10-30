@@ -32,7 +32,6 @@ output "private" {
   sensitive = true
 }
 
-
 resource "aws_instance" "tf-rancher-server" {
   ami           = var.myami
   instance_type = var.instancetype
@@ -51,7 +50,7 @@ resource "aws_instance" "tf-rancher-server" {
 }
 
 resource "aws_alb_target_group" "rancher-tg" {
-  name = "clarus-rancher-http-80-tg"
+  name = var.tg-name
   port = 80
   protocol = "HTTP"
   vpc_id = "vpc-0c1afcd66dcda0546"
@@ -78,11 +77,11 @@ data "aws_vpc" "selected" {
 }
 
 resource "aws_lb" "rancher-alb" {
-  name = "petclinic-rancherserver-alb"
+  name = var.alb-name
   ip_address_type = "ipv4"
   internal = false
   load_balancer_type = "application"
-  subnets = ["subnet-07be199b86168820a", "subnet-06ae843ee867d30a3", "subnet-0170dabfbcbb597bb","subnet-0213882afd00c0a24","subnet-0fd1088f5980d7352"]
+  subnets = ["subnet-07be199b86168820a", "subnet-0170dabfbcbb597bb", "subnet-0fd1088f5980d7352"]
   security_groups = [aws_security_group.rancher-alb.id]
 }
 
@@ -118,17 +117,17 @@ resource "aws_alb_listener" "rancher-listener2" {
     }
 }
 resource "aws_iam_policy" "policy_for_rke-controlplane_role" {
-  name        = "petclinic_policy_for_rke-controlplane_role"
+  name        = var.controlplane-policy-name
   policy      = file("cw-rke-controlplane-policy.json")
 }
 
 resource "aws_iam_policy" "policy_for_rke_etcd_worker_role" {
-  name        = "petclinic_policy_for_rke_etcd_worker_role"
+  name        = var.worker-policy-name
   policy      = file("cw-rke-etcd-worker-policy.json")
 }
 
 resource "aws_iam_role" "role_for_rancher" {
-  name = "petclinic_role_rancher"
+  name = var.rancher-role
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -150,19 +149,19 @@ resource "aws_iam_role" "role_for_rancher" {
 }
 
 resource "aws_iam_policy_attachment" "attach_for_rancher1" {
-  name       = "petclinic_attachment_for_rancher_controlplane"
+  name       = var.controlplane-attach
   roles      = [aws_iam_role.role_for_rancher.name]
   policy_arn = aws_iam_policy.policy_for_rke-controlplane_role.arn
 }
 
 resource "aws_iam_policy_attachment" "attach_for_rancher2" {
-  name       = "petclinic_attachment_for_rancher_worker"
+  name       = var.worker-attach
   roles      = [aws_iam_role.role_for_rancher.name]
   policy_arn = aws_iam_policy.policy_for_rke_etcd_worker_role.arn
 }
 
 resource "aws_iam_instance_profile" "profile_for_rancher" {
-  name  = "profile_for_petclinic_rancher"
+  name  = var.rancher-role
   role = aws_iam_role.role_for_rancher.name
 }
 
@@ -172,7 +171,7 @@ data "aws_route53_zone" "dns" {
 }
 
 resource "aws_route53_record" "arecord" {
-  name = "rancherserver.${data.aws_route53_zone.dns.name}"
+  name = "ranchero.${data.aws_route53_zone.dns.name}"
   type = "A"
   zone_id = data.aws_route53_zone.dns.zone_id
   alias {

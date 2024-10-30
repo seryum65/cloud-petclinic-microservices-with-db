@@ -80,8 +80,9 @@ kubectl create namespace cattle-system
 ```bash
 helm install rancher rancher-latest/rancher \
   --namespace cattle-system \
-  --set hostname=rancher.yusufsahin.link \
+  --set hostname=ranchero.yusufsahin.click \
   --set tls=external \
+  --version v2.8.2 \
   --set replicas=1
 ```
 
@@ -100,50 +101,3 @@ kubectl --kubeconfig $KUBECONFIG -n cattle-system exec $(kubectl --kubeconfig $K
 ```
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-## MSP 24 - Install Rancher App on RKE Kubernetes Cluster
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-* Install Helm [version 3+](https://github.com/helm/helm/releases) on Jenkins Server. [Introduction to Helm](https://helm.sh/docs/intro/). [Helm Installation](https://helm.sh/docs/intro/install/).
-
-```bash
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-helm version
-```
-
-* Add ``helm chart repositories`` of Rancher.
-
-```bash
-helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
-helm repo list
-```
-
-* Create a ``namespace`` for Rancher.
-
-```bash
-kubectl create namespace cattle-system
-```
-
-* Install Rancher on RKE Kubernetes Cluster using Helm.
-
-```bash
-helm install rancher rancher-latest/rancher \
-  --namespace cattle-system \
-  --set hostname=rancher.yusufsahin.link \
-  --set tls=external \
-  --set replicas=1
-```
-
-* Check if the Rancher Server is deployed successfully.
-  
-```bash
-kubectl -n cattle-system get deploy rancher
-kubectl -n cattle-system get pods
-```
-
-* If bootstrap pod is not initialized or you forget your admin password you can use the below command to reset your password.
-
-```bash
-export KUBECONFIG=~/.kube/config
-kubectl --kubeconfig $KUBECONFIG -n cattle-system exec $(kubectl --kubeconfig $KUBECONFIG -n cattle-system get pods -l app=rancher | grep '1/1' | head -1 | awk '{ print $1 }') -- reset-password
-```
