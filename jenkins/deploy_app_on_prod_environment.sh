@@ -15,6 +15,4 @@ AWS_REGION=$AWS_REGION helm repo update
 helm package k8s/petclinic_chart
 helm s3 push --force petclinic_chart-${BUILD_NUMBER}.tgz stable-petclinic
 helm repo update
-AWS_REGION=$AWS_REGION helm upgrade --install \
-    petclinic-app-release stable-petclinic/petclinic_chart --version ${BUILD_NUMBER} \
-    --namespace petclinic-prod-ns
+AWS_REGION=$AWS_REGION helm upgrade --install petclinic-app-release stable-petclinic/petclinic_chart --version ${BUILD_NUMBER} --namespace petclinic-prod-ns --kubeconfig k8s/config
